@@ -1,0 +1,98 @@
+1.#include<iostream>
+2.#include<conio.h>
+3.using namespace std;
+4.
+5.void SearchStack01(int pnt,int tm);
+6.void SearchStack02(int pnt, int tm);
+7.void AddQue(int pnt);
+8.int at[40], bt[40], ct[40]={0}, qt, rqi[40]={0}, c=0, st, flg=0, tm=0, noe=0, pnt=0, btm[40]={0}, tt, wt;
+9.float att, awt;
+10.
+11.main()
+12.{
+13.cout<<"ROUND ROBIN ALGO : INPUT聽 4 PROCESSES\n";
+14.cout<<"\n\t\tHere Some Attrib use in program \n";
+15.cout<<"AT = Arrival Time \nBT = Burst Time\nCT = Completion Time\nTT = Turnaround Time\nWT = Waiting Time\n\n";
+16.for(int x=0;x<4;x++){
+17.cout<<"\nProcess "<<x+1;
+18.cout<<"\nAT=";
+19.cin>>at[x];
+20.cout << "BT=";
+21.cin>>bt[x];
+22.btm[x]=bt[x];}
+23.cout<<"\nEnter time quantum:";
+24.cin>>qt;
+25.system("CLS");
+26.cout<<endl<<"GANTT CHART"<<endl<<at[0];
+27.do{
+28.if(flg==0){
+29.st=at[0];
+30.//---ReduceBT
+31.if(btm[0]<=qt){
+32.tm=st+btm[0];
+33.btm[0]=0;
+34.SearchStack01(pnt,tm);}
+35.else{
+36.btm[0]=btm[0]-qt;
+37.tm=st+qt;
+38.SearchStack01(pnt,tm);
+39.AddQue(pnt);}
+40.}//if
+41.else{
+42.pnt=rqi[0]-1;
+43.st=tm;
+44.//---DeleteQue
+45.for(int x=0;x<noe && noe!=1;x++){
+46.rqi[x]=rqi[x+1];}
+47.noe--;
+48.//---ReduceBT
+49.if(btm[pnt]<=qt){
+50.tm=st+btm[pnt];
+51.btm[pnt]=0;
+52.SearchStack02(pnt, tm);}
+53.else{
+54.btm[pnt]=btm[pnt]-qt;
+55.tm=st+qt;
+56.SearchStack02(pnt, tm);
+57.AddQue(pnt);}
+58.}//else
+59.//AssignCTvalue
+60.if(btm[pnt]==0){
+61.ct[pnt]=tm;
+62.}//if
+63.flg++;
+64.cout<<"]-P"<<pnt+1<<"-["<<tm;
+65.}while(noe!=0);
+66.cout<<"\n\nPROCESS\t AT\t BT\t CT\t TT\t WT\n";
+67.for(int x=0;x<4;x++){
+68.tt=ct[x]-at[x];
+69.wt=tt-bt[x];
+70.cout<<"P"<<x+1<<" \t "<<at[x]<<" \t "<<bt[x]<<" \t "<<ct[x]<<" \t "<<tt<<" \t "<<wt<<"\n";
+71.awt=awt+wt;
+72.att=att+tt;
+73.}//for
+74.cout<<"\nAVERAGE TT: "<<att/4<<"\nAVERAGE WT: "<<awt/4;
+75.}//main
+76.void SearchStack01(int pnt,int tm){
+77.for(int x=pnt+1;x<4;x++){
+78.if(at[x]<=tm){
+79.rqi[noe]=x+1;
+80.noe++;}
+81.}//for
+82.}//void
+83.void SearchStack02(int pnt, int tm){
+84.for(int x=pnt+1;x<4;x++){
+85.//---CheckQue
+86.int fl=0;
+87.for(int y=0;y<noe;y++){
+88.if(rqi[y]==x+1){
+89.fl++;}}
+90.if(at[x]<=tm && fl==0 && btm[x]!=0){
+91.rqi[noe]=x+1;
+92.noe++;}
+93.}//for
+94.}//void
+95.void AddQue(int pnt){
+96.rqi[noe]=pnt+1;
+97.noe++;
+98.}//void
